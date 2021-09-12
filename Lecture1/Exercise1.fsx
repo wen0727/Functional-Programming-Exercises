@@ -3,7 +3,7 @@
 (*** memberOf x ys is true iff x occurs in the ys list ***)
 let rec memberOf x ys =
     match ys with 
-    | [] -> true
+    | [] -> false
     | y::yt -> x=y || memberOf x yt;;
 
 memberOf 'x' ['y';'z'];;
@@ -11,10 +11,17 @@ memberOf 'x' ['y';'z'];;
 let rec insert(x,ys) =
     match ys with
     | [] -> [x]
-    | y::yt when x<=y -> x::y::yt
+    | y::_ when x<=y -> x::ys
     | y::yt -> y::insert(x,yt);;
-
 insert(1,[0;2;3;4]);;
+(*** Other method ***)
+let rec insertT x ys =
+    match ys with
+    | [] -> [x]
+    | y::_ when x<y -> x::ys
+    | y::yt -> y::insertT x yt;;
+
+insertT 1 [0;2;3;4];;
 (*** sort(xs) gives an ordered version of xs ***)
 let rec sort(xs) =
     match xs with
