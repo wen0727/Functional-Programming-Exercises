@@ -81,3 +81,22 @@ let rec eval s p =
     | a::an -> a + eval s (mulC s an);;
 
 eval 2 [2;3;0;1]
+
+(*** Other method 
+Higher-order function
+***)
+(*** Bad pattern matching may circumvent the flawed code and cause errors. ***)
+let rec power x n =
+    match n with
+    | 0 -> 1
+    | _ -> x * power x (n-1);;
+power 2 3
+let rec evalTe s p i =
+    match p with
+    | [] ->  0
+    | a::an -> a * power s i + evalTe s an (i+1)
+evalTe 2 [2;1] 3
+let evalT s p = evalTe s p 0;;
+
+evalT 2 [2;3;0;1]
+
