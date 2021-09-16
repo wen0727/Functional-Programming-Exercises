@@ -11,9 +11,9 @@ For instance, (1+2x)+(3+4x+5x^2+6x^3)=4+6x+5x^2+6x^3 is represented by
 ***)
 let rec add p q = 
     match (p,q) with
-    | ([],_) -> p
-    | (_,[]) -> q
-    | (a::an,b::bm) -> a+b::add an bm;;
+    | ([],_) -> q
+    | (_,[]) -> p
+    | (a::an,b::bm) -> (a+b)::add an bm;;
 
 add [1;2] [3;4;5;6];;
 
@@ -25,7 +25,7 @@ instance, 2(2+x^3)=4+2^3 and we represent this by
 let rec mulC c p =
     match p with
     | [] -> []
-    | a::an -> c*a::mulC c an;; 
+    | a::an -> (c*a)::mulC c an;; 
 mulC 2 [2;0;0;1];;
 
 (*** sub: Poly -> Poly -> Poly 
@@ -60,13 +60,19 @@ Multiplication Properties
 For instance, (2+3x+x^3)(1+2x+3x^2)=2+7x+12^2+10x^3+2x^4+3x^5 and this can be represented 
 as follows:
     mul [2;3;0;1] [1;2;3]
+when currying so many functions, it is easier to think as the commented function as below:
+let rec mul p q =
+    match (p,q) with
+    | ([],_) -> []
+    | (_,[]) -> []
+    | (a::an,_) -> let NLST = mul an (mulX q) 
+                   add (mulC a q) NLST;;
 ***)
 let rec mul p q =
     match (p,q) with
     | ([],_) -> []
     | (_,[]) -> []
-    | (a::an,_) -> add (mulC a q) (mul an (mulX q)) ;;
-
+    | (a::an,_) -> add (mulC a q) (mul an (mulX q));;
 mul [2;3;0;1] [1;2;3];;
 
 (*** eval: int-> Poly -> int
@@ -84,19 +90,20 @@ eval 2 [2;3;0;1]
 
 (*** Other method 
 Higher-order function
+1. apply power function to the integer substitution for each order.
+2. a helper function to add the value of each term
 ***)
-(*** Bad pattern matching may circumvent the flawed code and cause errors. ***)
-let rec power x n =
+let rec powerP x n =
     match n with
     | 0 -> 1
-    | _ -> x * power x (n-1);;
-power 2 3
+    | _ -> x * powerP x (n-1);;
+powerP 2 3;;
 let rec evalTe s p i =
     match p with
     | [] ->  0
-    | a::an -> a * power s i + evalTe s an (i+1)
+    | a::an -> a * powerP s i + evalTe s an (i+1)
 evalTe 2 [2;1] 3
 let evalT s p = evalTe s p 0;;
 
-evalT 2 [2;3;0;1]
+evalT 2 [2;3;0;1];;
 
