@@ -172,7 +172,7 @@ consider the declarations:
         f: int*int list -> int list
         Because the type of x-1 is integer so 
             x : int
-        Therefore the type of x+y is integer and 
+        Therefore the type of x+y is integer and
             y : int
         The pattern is of the form (x,[]) so
             (x,[]) : int*int list
