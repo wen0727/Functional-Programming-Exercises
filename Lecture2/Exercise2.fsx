@@ -223,10 +223,13 @@ add = f(+) and sub = f(-)
 **)
 #load "..\Polynomials\Part1.fsx";;
 open Part1
+(*** The commented functions would overwrite the operators. Therefore, we hide the solution for uneccessery miss using. 
 let (+) P Q = add P Q;;
 (+) [1;2;3] [1;2;3];;
 let (-) P Q = sub P Q;;
 (-) [1;2;3] [1;2;3];;
+***)
+
 
 
 

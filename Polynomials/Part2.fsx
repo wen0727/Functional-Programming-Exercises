@@ -58,9 +58,10 @@ reversing a list, home-made may not better than library one, so we can use List.
 let rec pruneH ts = 
     match ts with
     | [] -> []
-    | X::tt -> if X>0 then pruneH tt else List.rev ts
-let prune ts :Poly = pruneH (List.rev ts)  ;;
-
+    | X::tt -> if X=0 then pruneH tt else List.rev ts
+let prune ts = pruneH (List.rev ts);;
+List.rev [-2; 1; 0]
+prune [-2; 1; 0]
 (** toString: Poly -> string 
 Choose an appealing textual representation of a polynomial and declare an associated toString funciton. The output should be as follows:
     i.e. 1 - 3x^2 

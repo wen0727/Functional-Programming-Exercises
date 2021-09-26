@@ -1,4 +1,5 @@
 ﻿(* The relative path *)
+#load "..\Lecture1\Exercise1.fsx"
 #load "..\Lecture2\Exercise2.fsx"
 (* Specifies an assembly search path in quotation marks. *)
 #I @"C:\Users\wenha\.nuget\packages\fscheck\2.16.3\lib\net452"
@@ -6,6 +7,7 @@
 #r @"FsCheck.dll"
 (* To omit typeing Exercise."Function" *)
 open Exercise2 
+open Exercise1
 open FsCheck
 (* Exercise 3 *)
 (** HR 4.16 
@@ -34,7 +36,7 @@ Solution:
 Types for the important concetps of the problem formulation including, at least, types 
 for the register, themes of interests, descriptions and arrangement.
 ***)
-(**** Basci type, they can be omitted ****)
+(**** Basic type, they can be omitted ****)
 type Name = string
 type Phnumber = string
 type Byear = int
@@ -148,7 +150,7 @@ The correctness property can be expressed by the predicate as follows:
 ***)
 let rec lowestNum s = function
     | [] -> true
-    | X::tt -> s<X && lowestNum s tt;;
+    | X::tt -> s<=X && lowestNum s tt;;
 
 let rec ordered xs =
     match xs with
@@ -160,3 +162,44 @@ let orderedSort(xs: int list) = ordered(sort xs);;
 let commProp(x,y) = x+y = y+x;;
 let commPropTest = Check.Quick commProp;;
 let commPropTestVerbose = Check.Verbose commProp;;
+
+(*** Test the property orderedSort using FsCheck 
+It is important for FsCheck that the predicates being tested are not polymorphic types.
+***)
+let orderedSortTest = Check.Quick orderedSort;;
+let orderedSortTestVB = Check.Verbose orderedSort;;
+
+(*** Further property-based testing 
+The main goal of property-based test is for program correctness rather than making test cases.
+
+Now, we should address second property of a sorting function. To count elements' occurencies in a list.
+For example, the counting for [3;2;6;3;2;1] is [(1;1);(2;2);(3;2);(6;1)].
+***)
+
+(**** 1. increment(x,cnt) the value of increment(i,cnt) is the counting obtained from cnt by adding 1. ****)
+let increment(x,cnt) = (x,cnt+1)
+
+(**** 2. toCounting xs to count element occurencies of a list ****)
+let rec editOcc s ts =
+    match ts with
+    | [] -> []
+    | (X,occ)::tt -> if s=X 
+                     then increment(X,occ)::tt
+                     else (X,occ)::editOcc s tt
+    
+
+let rec toCounting xs = 
+    match xs with
+    | [] -> []
+    | X::xt -> let EOS = toCounting xt
+               if (memberOf X xt)=false
+               then insert (increment(X,0),EOS)
+               else editOcc X EOS
+
+(**** 3. Test the property: ordered(toCounting xs) ****)
+let orderedEOS (xs: int list) = ordered(toCounting xs)
+let orderedEOSTest = Check.Quick orderedEOS
+
+(**** 4. Test the property toCounting xs = toCouting(sort xs) ****)
+let orderedEOSCorrect (xs: int list) = toCounting xs = toCounting (sort xs)
+let orderedEOSCorrectTest = Check.Quick orderedEOSCorrect
