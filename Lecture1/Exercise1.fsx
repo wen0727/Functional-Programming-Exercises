@@ -22,13 +22,15 @@ let rec insertT x ys =
     | y::yt -> y::insertT x yt;;
 
 insertT 1 [0;2;3;4];;
-(*** sort(xs) gives an ordered version of xs ***)
-let rec sort(xs) =
+(*** sort(xs) gives an ordered version of xs 
+name change to isort due to in Exercise3.fsx, there is a name collision for merge sort function.
+***)
+let rec isort(xs) =
     match xs with
     | [] -> []
-    | x::xt -> insert(x,sort(xt));;
+    | x::xt -> insert(x,isort(xt));;
 
-sort([1;2;3;4;0]);;
+isort([1;2;3;4;0]);;
 
 (** Exercise 1 **)
 (*** 1.4
