@@ -1,6 +1,7 @@
 (* Mini-project: Computing with Polynomials *)
 (** Part 1: Recursive list functions **)
 (*** Type abbreviation, acronym ***)
+
 type Poly = int list
 
 (*** add: Poly -> Poly -> Poly 
@@ -9,13 +10,24 @@ The order of the polynomials are represented by the order of the list.
 For instance, (1+2x)+(3+4x+5x^2+6x^3)=4+6x+5x^2+6x^3 is represented by
     add [1;2] [3;4;5;6] = [4;6;5;6]
 ***)
-let rec add ss ts = 
+
+let rec pruneH ts = 
+    match ts with
+    | [] -> []
+    | X::tt -> if X=0 then pruneH tt else List.rev ts
+let prune ts = pruneH (List.rev ts);;
+
+let rec fPadd ss ts = 
     match (ss,ts) with
     | ([],_) -> ts
     | (_,[]) -> ss
-    | (X::st,Y::tt) -> (X+Y)::add st tt;;
-
+    | (X::st,Y::tt) -> (X+Y)::fPadd st tt;;
+let add ss ts = prune (fPadd ss ts);;
 add [1;2] [3;4;5;6];;
+(* For add ss ts, even ss and ts are assumed as legal representation of polynomials the new polynomial can be still illegal representation without prune function. 
+For instance, add [-1] [1] would be illegal without applying prune function to the result. Same result would be seen in sub and compose function *)
+
+
 
 (*** mulC: int -> Poly -> Poly *
 The function mulC should implement the multiplication of a polynomial by a constant. For 
@@ -24,23 +36,29 @@ instance, 2(2+x^3)=4+2^3 and we represent this by
 **)
 let rec mulC c ts =
     match ts with
+    | _ when c=0 -> []
     | [] -> []
     | X::tt -> (c*X)::mulC c tt;; 
 mulC 2 [2;0;0;1];;
+mulC 2 [0];;
+mulC 0 [1];;
 
 (*** sub: Poly -> Poly -> Poly 
 Subtraction of two polynomials represented by lists is performed by element-wise substrac
 -tions. For instance, (1+2x)-(3+4x+5x^2+6x^3)=-2-2x-5x6^2-6x^3 and we represent this as 
 follows:
     sub [1;2] [3;4;5;6] = [-2;-2;-5;-6]
-***)
-let rec sub ss ts =
-    match (ss,ts) with
-    | ([],Y::tt) -> -Y::sub [] tt
-    | (_,[]) -> ss
-    | (X::st,Y::tt) -> (X-Y)::sub st tt;;
 
-sub [1;2] [3;4;5;6]
+let sub ps qs = add ps (mulC -1 qs)
+***)
+let rec fPsub ss ts =
+    match (ss,ts) with
+    | ([],Y::tt) -> -Y::fPsub [] tt
+    | (_,[]) -> ss
+    | (X::st,Y::tt) -> (X-Y)::fPsub st tt;;
+let sub ss ts = prune(fPsub ss ts);;
+sub [1;2] [3;4;5;6];;
+sub [-1] [-1];;
 (*** mulX: Poly -> Poly
 The multiplication function mulX should implement the multiplication of a polynomial by  
 x. For instance, x(2+x^3)=2x+x^4 and we represent that by
@@ -75,8 +93,9 @@ let rec mul ss ts =
     | (_,[]) -> []
     | (X::st,_) -> add (mulC X ts) (mul st (mulX ts));;
 mul [2;3;0;1] [1;2;3];;
-mul [0;3;2] [0;3;2]
-mul [0; 0; 9; 12; 4] [0;3;2]
+mul [0;3;2] [0;3;2];;
+mul [0; 0; 9; 12; 4] [0;3;2];;
+
 (*** eval: int-> Poly -> int
 If P(x) is a polynomial and a is ans integer, then the eval function should compute the 
 integer value P(a). For instance, if P(x)=2+3x+x^3 then P(2)=2+3*2+2^3=16, this is int-

@@ -7,6 +7,6 @@ open Part2
 #I @"C:\Users\wenha\.nuget\packages\fscheck\2.16.3\lib\net452"
 #r @"FsCheck.dll"
 open FsCheck
-let addInv (p1:int list) (p2:int list) = isLegal(prune(add p1 p2))
+let addInvP3 (p1:int list) (p2:int list) = isLegal(prune(add p1 p2))
 prune(add [-2] [0; 1; 0])
-let testAddProp = Check.Quick addInv
+let testAddPropP3 = Check.Quick addInvP3

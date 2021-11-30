@@ -141,13 +141,13 @@ Declare a function sum(p,xs) where p is a predicate of type int -> bool and xs i
 integers. The value of sum(p,xs) is the sum of the elements in xs satisfying the predicate p. 
 Test the function on different predicates (e.g,p(x)=x>0).
 ***)
-let p4_12(x) = x>0
+let p4_12 x = x>0;;
 (*** Better method ***)
 let rec sum(p,xs) =
     match xs with
     | [] -> 0
-    | x::xt -> let SUM = sum(p,xt) 
-               if p(x) then x+SUM
+    | X::xt -> let SUM = sum(p,xt) 
+               if p(X) then X+SUM
                else SUM;;
 sum(p4_12,[0;1;2;3]);;
 

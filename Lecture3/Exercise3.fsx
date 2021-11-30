@@ -72,9 +72,9 @@ let rec extractTargetGroup p r =
     match r with 
     | [] -> []
     | (n,((no,_,_) as desc))::rt -> let NPS = extractTargetGroup p rt
-                                       if p(desc)
-                                       then (n,no)::NPS
-                                       else NPS;;
+                                    if p(desc)
+                                    then (n,no)::NPS
+                                    else NPS;;
 (* No tail-recursive *)
 let rec extractTargetGroup p r = 
     match r with 
@@ -97,8 +97,8 @@ let reg = [("Wen",("123456",1987,["soccer";"jazz"]));
 let rec findNameAndNum p CT = function
     | [] -> List.rev CT (*If order doesn't matter then just CT*)
     | (X,(Y,Z,TS))::rt -> if p(Y,Z,TS)
-                             then findNameAndNum p ((X,Y)::CT) rt
-                             else findNameAndNum p CT rt;;
+                          then findNameAndNum p ((X,Y)::CT) rt
+                          else findNameAndNum p CT rt;;
 let extractTargetGroup p r = findNameAndNum p [] r
 
 (*** 4. 
@@ -198,8 +198,8 @@ let rec toCounting xs =
 
 (**** 3. Test the property: ordered(toCounting xs) ****)
 let orderedEOS (xs: int list) = ordered(toCounting xs)
-let orderedEOSTest = Check.Quick orderedEOS
+let _ = Check.Quick orderedEOS
 
 (**** 4. Test the property toCounting xs = toCouting(sort xs) ****)
 let orderedEOSCorrect (xs: int list) = toCounting xs = toCounting (sort xs)
-let orderedEOSCorrectTest = Check.Quick orderedEOSCorrect
+let _ = Check.Quick orderedEOSCorrect
