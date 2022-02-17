@@ -10,25 +10,30 @@ let rec collect f = function
 (**** 1. Reason about the type is indeed the most general type of collect.
             Anyother type for collect is an instance of the above one.
             We may use e:t type assertions and 'a= "Some type" informally.
-
-        1. As the function keword construct the pattern matching expressions, we can label the pattern expressions such as
-                [] : T1 list    x::xs : T1 list
-           And the we label the matched expressions as
-                [] : T2 list    f x @ collect f xs : T2 list
         
-        2. Inspect the pattern x::xs is constructed by :: operator, so
-                x : T1          xs : T1 list
-           Examine the matched expression f x @ collect f xs  is constructed by @ operator, so
-                f x : T2 list   collect f xs : T2 list
+        1. The argument of the function collect is f and an anonymous pattern, so we can label f as :
+            f : T1 
+
+        2. The pattern of matching expressions is a type of list, we can label the patterns such as
+                [] : T2 list    x::xs : T2 list
+           And they are matched to the value expressions as
+                [] : T3 list    f x @ collect f xs : T3 list
+        
+        3. Inspect the pattern x::xs is constructed by :: operator, so
+                x : T2          xs : T2 list
+           Examine the expression f x @ collect f xs is the infix operator @ applied to f x and collect f xs, so
+                f x : T3 list   collect f xs : T3 list
            Now, we have
-                f x : T2 list   x : T1
+                f x : T3 list   x : T2
            Then we can conclude
-                f : T1 -> T2 list
+                T1=T3 list
+                f : T2 -> T3 list
 
-        3. There are no further constraints and the type of collect is evaluated as
-                collect : f: (T1 -> T2 list) -> T1 list -> T2 list
+        4. There are no further constraints and the type of collect is evaluated as
+                collect : f: (T2 -> T3 list) -> T2 list -> T3 list
         
-        4. In F#, T1 and T2 are renamed as 'a and 'b. 
+        5. In F#, T2 and T3 are renamed as 'a and 'b. 
+                collect : f: ('a-> 'b list) -> 'a list -> 'b list
 ****)
 
 (**** 2. Give an evaluation showing that [1;2;3;4;5;6;7;8] is the value of the expression
@@ -68,6 +73,7 @@ let rec collect f = function
         collect (fun (a,b) -> [a..b]) [(1,3);(4,7);(8,8)]
         val collect: (int*int -> int list) -> (int*int) list -> int list 
 ****)
+
 
 (*** Task 2 Airport-Luggage problem. For the first 4 questions, library functions are forbiden.
 ***)
