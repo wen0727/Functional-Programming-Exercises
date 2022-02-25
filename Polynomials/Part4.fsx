@@ -22,8 +22,9 @@ degree [1;2;3;0;0;0]
 
 (** Test the built-in "<=" operator betweeb the type constructors of type Degree **)
 MinusInf <= Fin 0
+MinusInf > Fin 0
 Fin 3 <= Fin 4 
-
+max MinusInf (Fin 4)
 (** Declare an F# function 
     addD: Degree -> Degree -> Degree adding degrees
         addition of finite degrees would be represent as addition of the deegrees for instance Fin 7 + Fin 8 = Fin 15;
@@ -59,5 +60,5 @@ open Part1
 open FsCheck
 
 let multCVmulC c p = multC c p = mulC c p
-let testmultCVmulC = Check.Quick multCVmulC
+let _ = Check.Quick multCVmulC
 

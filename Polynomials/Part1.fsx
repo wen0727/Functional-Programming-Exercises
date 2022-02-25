@@ -11,18 +11,11 @@ For instance, (1+2x)+(3+4x+5x^2+6x^3)=4+6x+5x^2+6x^3 is represented by
     add [1;2] [3;4;5;6] = [4;6;5;6]
 ***)
 
-let rec pruneH ts = 
-    match ts with
-    | [] -> []
-    | X::tt -> if X=0 then pruneH tt else List.rev ts
-let prune ts = pruneH (List.rev ts);;
-
-let rec fPadd ss ts = 
+let rec add (ss : Poly) (ts : Poly) : Poly = 
     match (ss,ts) with
     | ([],_) -> ts
     | (_,[]) -> ss
-    | (X::st,Y::tt) -> (X+Y)::fPadd st tt;;
-let add ss ts = prune (fPadd ss ts);;
+    | (X::st,Y::tt) -> (X+Y)::add st tt;;
 add [1;2] [3;4;5;6];;
 (* For add ss ts, even ss and ts are assumed as legal representation of polynomials the new polynomial can be still illegal representation without prune function. 
 For instance, add [-1] [1] would be illegal without applying prune function to the result. Same result would be seen in sub and compose function *)
@@ -34,7 +27,7 @@ The function mulC should implement the multiplication of a polynomial by a const
 instance, 2(2+x^3)=4+2^3 and we represent this by
     mulC 2 [2;0;0;1] = [4;0;0;2]
 **)
-let rec mulC c ts =
+let rec mulC c (ts : Poly) : Poly =
     match ts with
     | _ when c=0 -> []
     | [] -> []
@@ -51,12 +44,11 @@ follows:
 
 let sub ps qs = add ps (mulC -1 qs)
 ***)
-let rec fPsub ss ts =
+let rec sub (ss : Poly) (ts : Poly) :Poly =
     match (ss,ts) with
-    | ([],Y::tt) -> -Y::fPsub [] tt
+    | ([],Y::tt) -> -Y::sub [] tt
     | (_,[]) -> ss
-    | (X::st,Y::tt) -> (X-Y)::fPsub st tt;;
-let sub ss ts = prune(fPsub ss ts);;
+    | (X::st,Y::tt) -> (X-Y)::sub st tt;;
 sub [1;2] [3;4;5;6];;
 sub [-1] [-1];;
 (*** mulX: Poly -> Poly
@@ -64,7 +56,7 @@ The multiplication function mulX should implement the multiplication of a polyno
 x. For instance, x(2+x^3)=2x+x^4 and we represent that by
     mulX [2;0;0;1]=[0;2;0;0;1]
 ***)
-let mulX ts =
+let mulX (ts : Poly) : Poly =
     match ts with
     | [] -> []
     | _ -> 0::ts;;
@@ -87,7 +79,7 @@ let rec mul ss ts =
     | (X::st,_) -> let NLST = mul st (mulX ts) 
                    add (mulC X ts) NLST;;
 ***)
-let rec mul ss ts =
+let rec mul (ss : Poly) (ts : Poly) : Poly =
     match (ss,ts) with
     | ([],_) -> []
     | (_,[]) -> []
@@ -109,7 +101,7 @@ let rec eval s ts =
     | X::tt -> let NC = eval s (mulC s tt)
                X + NC;;
 ***)
-let rec eval s ts =
+let rec eval s (ts : Poly) =
     match ts with
     | [] -> 0
     | X::tt -> X + eval s (mulC s tt);;
@@ -135,4 +127,6 @@ eval1H powerI 2 [2;1] 3;;
 let evalT s ts = eval1H powerI s ts 0;;
 
 evalT 2 [2;3;0;1];;
+
+
 

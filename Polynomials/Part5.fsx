@@ -1,12 +1,15 @@
 (* Part 5: Correctness - property-based testing *)
 #load "Part1.fsx"
 #load "Part2.fsx"
+#load "Part3.fsx"
 #load "Part4.fsx"
-open Part1
-open Part2
-open Part4
 #I @"C:\Users\wenha\.nuget\packages\fscheck\2.16.3\lib\net452"
 #r @"FsCheck.dll"
+
+open Part1
+open Part2
+open Part3
+open Part4
 open FsCheck
 
 (** Exploit the prune function to generates legal representation of polynomials. **)
@@ -56,6 +59,7 @@ let _ = Check.Quick derivativeInv;;
 let Zero = [];;
 let One = [1];;
 let fPaddInv p = sub Zero p;;
+
 
 
 (*** 1. For all p1,p2 and p3:
