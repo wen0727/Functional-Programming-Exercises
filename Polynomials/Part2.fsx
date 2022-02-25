@@ -1,5 +1,5 @@
 (* Part 2: Functional decomposition *)
-#time
+
 #load "Part1.fsx";;
 open Part1
 (** For uniqe representation of a polynomial we should have 
@@ -11,43 +11,26 @@ open Part1
 **)
 (** isLegal: int list -> bool 
 The function isLegal tests whether an integer list is a legal representation of a polynomial.
-(** Other method **)
-let rec reverseList = function
-    | [] -> []
-    | X::tt -> let NXS = reverseList tt
-               NXS @ [X];;
-let rec reverseList1 ts = function
-    | [] -> ts
-    | X::st -> reverseList1 X::ts st
-let reverseList ts = reverseList1 [] ts;;
-let isLegal ts = 
-    match reverseList(ts) with
-    | [] -> true
-    | X::_ -> X<>0;;
-isLegal [1;2;-3;0];;
 **)
-(** Better method **)
-let rec isLegal = function
+let rec isLegal (xs : Poly) = 
+    match xs with
     | [] -> true
     | [X] -> X<>0 
-    | _::tt -> isLegal tt;;
-isLegal [0;1;2;-3;0;1;0;0];
+    | _::xt -> isLegal xt;;
+isLegal [0;1;2;-3;0;1;0;0];;
 
 (** prune: int list -> Poly 
 Any integer list can be turned into a leagal representation of a polynomial by removal of 0's 
 occurring at the end of the list. The function prune should do this.
 **)
 
-(**A method 
-reversing a list, home-made may not better than library one, so we can use List.rev for the task
-let rec pruneH ts = 
-    match ts with
+let rec fRemove0 xs = 
+    match xs with
     | [] -> []
-    | X::tt -> if X=0 then pruneH tt else List.rev ts
-let prune ts = pruneH (List.rev ts);;
-List.rev [-2; 1; 0]
-prune [-2; 1; 0]
-**)
+    | x::xt -> if x=0 
+               then fRemove0 xt
+               else List.rev xs;;
+let prune xs : Poly = fRemove0 (List.rev xs);;
 
 (** toString: Poly -> string 
 Choose an appealing textual representation of a polynomial and declare an associated toString funciton. The output should be as follows:
@@ -58,34 +41,44 @@ means empty list
 Here we have to model the order of the polynomial.
 **)
 
-let rec pExp2str f = function
-    | (_,[]) -> ""
-    | (o,X::tt) -> let NS = pExp2str f (o+1,tt)
-                   f(o,X) + NS;;
-     
-let pTerm2str(o,t) = 
-    match t with
+let fXorder =
+    function
     | 0 -> ""
-    | X -> if X>0 then " + " + (string X) + "x^" + (string o)
-           else " - " + (string -X) + "x^" + (string o);;
-let toString (ts:Poly) = 
-    match ts with
-    | [] -> "0"
-    | X::tt -> (string X) + pExp2str pTerm2str (1,tt);;
-                       
-toString [2;0;-3];;
+    | 1 -> "x"
+    | n -> "x^"+ string n;;
 
+let fTerm n = 
+    function
+    | 0 -> ""
+    | 1 -> "+" + fXorder n 
+    | c -> if c>1 then "+" + string c + fXorder n
+           else string c + fXorder n
+
+let rec fPRterm n = 
+    function
+    | [] -> ""
+    | x::xt -> fTerm n x + fPRterm (n+1) xt;;
+let rec fPFterm n = 
+    function
+    | [] -> ""
+    | x::xt when x<>0 -> string x + fXorder n + fPRterm (n+1) xt
+    | _::xt -> fPFterm (n+1) xt;;
+
+let toString ts = fPFterm 0 ts;;
+toString [0;0;0;2]
+toString [1;1;0;-3;6;8;10]
 
 (* derivative: Poly -> Poly 
 For a polynomial P(x) = a_0 + a_1*x + a_2*x^2 + ... + a_n*x^n, we have 
     P'(x) = a_1 + 2a_2x + ... + n*a_n*x^n-1
 *)
 
-let rec derivativeH = function
+let rec derivativeH = 
+    function
     | (_,[]) -> []
-    | (0,ps) -> ps
-    | (n,X::pt) -> let Nts = derivativeH(n+1,pt)
-                   (X*n)::Nts;;
+    | (n,x::xt) -> let NT = derivativeH(n+1,xt)
+                   if n=0 then derivativeH(n+1,xt)
+                   else (x*n)::NT;;
 let derivative ts = derivativeH(0,ts);;
 derivative [0;1;0];;
 (** compose: Poly -> Poly -> Poly 
@@ -95,7 +88,8 @@ For instance, if P(x)=2+4x^3 and Q(x)=3x+2x^2 then
 
 **)
 
-let rec powerP ps = function
+let rec powerP ps = 
+    function
     | 0 -> [1]
     | n -> let NP = powerP ps (n-1)
            mul ps NP
@@ -107,7 +101,7 @@ let rec fPsubst ps n qs =
     | X::pt -> let NP = fPsubst pt (n+1) qs
                add (mulC X (powerP qs n)) NP
    
-let compose ps qs = fPsubst ps 0 qs;;
+let compose (ps : Poly) (qs : Poly) : Poly = fPsubst ps 0 qs;;
 compose [2;0;0;4] [0;3;2];;
 mul [2;0;0;4] [0;3;2];;
 powerP (prune [0;0;1;0;0]) 3;;
