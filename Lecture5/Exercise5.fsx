@@ -245,7 +245,7 @@ fSumECTSMM (Set.toList (set [1])) (Map.toList (Map.ofList [(1,Some 5); (2,Some 5
 let rec fLookUp cn cb = 
     match cb with
     | [] -> 0
-    | (a,b)::ent when cn=a -> b
+    | (a,b)::_ when cn=a -> b
     | _::ent -> fLookUp cn ent;;
 
 let rec fSumECTS cns cb =
