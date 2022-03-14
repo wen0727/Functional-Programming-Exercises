@@ -1,0 +1,10 @@
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\bin\Debug\net6.0\LibPolynomial.deps.json
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\bin\Debug\net6.0\LibPolynomial.dll
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\bin\Debug\net6.0\LibPolynomial.pdb
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\bin\Debug\net6.0\LibPolynomial.xml
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.fsproj.AssemblyReference.cache
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.AssemblyInfoInputs.cache
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.AssemblyInfo.fs
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.dll
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.xml
+D:\General Repository\Functional-Programming-Exercises\Polynomials\Projects\PolynomialSolution\src\LibPolynomial\obj\Debug\net6.0\LibPolynomial.pdb
