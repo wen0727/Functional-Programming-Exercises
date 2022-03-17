@@ -40,9 +40,9 @@ let rec collect f = function
             collect (fun (a,b) -> [a..b]) [(1,3);(4,7);(8,8)] using e1~>e2 format
         
             collect (fun (a,b) -> [a..b]) [(1,3);(4,7);(8,8)]
-        ~>  [1;2;3] @ collect f [(4,7);(8,8)]
-        ~>  [1;2;3] @ ([4;5;6;7] @ collect f [(8,8)])
-        ~>  [1;2;3] @ ([4;5;6;7] @ ([8] @ collect f []))
+        ~>  f(1,3) @ collect f [(4,7);(8,8)]
+        ~>  [1;2;3] @ (f(4,7) @ collect f [(8,8)])
+        ~>  [1;2;3] @ ([4;5;6;7] @ (f(8,8) @ collect f []))
 
         until here are the steps consist anonymous functions
 
@@ -93,38 +93,41 @@ type LuggageCatalogue = (Lid * Route) list
 open Exercise5
 
 
-let rec fFindrouteP lid = 
+let rec findroute lid = 
     function
-    | [] -> failwith "Could not find the route."
-    | (x,r)::lcgt when x=lid -> r
-    | _::lcgt -> fFindrouteP lid lcgt;;
-
-let findRoute lid lcgs = fFindrouteP lid lcgs;;
+    | (x,r)::_ when x=lid -> r
+    | _::yt -> findroute lid yt
+    | _ -> failwith "Could not find the route.";;
 
 (**** 2. Declare a function 
             inRoute: Filight -> Route -> bool 
          that asserts whether a given flight exists in a route.
-****)
+(* Home made list forall function. *)
 let rec pOccur p =
     function
     | [] -> false
-    | x::_ when p x -> true
-    | _::xt -> pOccur p xt;;
+    | x::xt -> p x || pOccur p xt;;
 
 let inRoute fl rs = pOccur (fun (x,_) -> x=fl) rs;; 
+****)
+
+
+let rec inRoute fl = 
+    function
+    | (fl1,_)::r -> fl1=fl || inRoute fl r
+    | [] -> false;;
 
 (**** 3. Declare a function 
             withFlight f lc 
          returns the laguages belong to the flight. 
 ****)
 
-let rec fWithflightP fl =
+let rec withFlight fl =
     function
     | [] -> []
-    | (lid,rs)::lct when inRoute fl rs  -> lid::fWithflightP fl lct
-    | _::lct -> fWithflightP fl lct
+    | (lid,rs)::lct when inRoute fl rs -> lid::withFlight fl lct
+    | _::lct -> withFlight fl lct
 
-let withFlight f lc = fWithflightP f lc;;
 
 type ArrivalCatalogue = (Airport * Lid list) list
 [("ATL", ["DL 016-914"; "SK 222-142"]);
@@ -154,12 +157,10 @@ let rec fAddLua lid an ac =
     | (x,lids)::act -> if x=an 
                        then (x,lid::lids)::act
                        else (x,lids)::fAddLua lid an act;;
-let rec fExtendP lid r ac =
+let rec extend(lid,r,ac) =
     match r with
     | [] -> ac
-    | (_,an)::rt -> fExtendP lid rt (fAddLua lid an ac)
-
-let extend(lid,r,ac) = fExtendP lid r ac;;
+    | (_,an)::rt -> extend (lid,rt,fAddLua lid an ac);;
 
 (**** 5. Declare a function 
             toArrivalCatalogue: LuggageCatalogue -> ArrivalCatalogue
