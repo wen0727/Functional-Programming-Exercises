@@ -96,12 +96,12 @@ let rec f xs ys =
 
 (**** Q2 Give type for function f and describe what f computes.
     Type analysis
-    (1. The argument of function f is xs and ys, so we can lable them with fresh general types as below
+    (1. The arguments of function f are xs and ys, so we can lable them with fresh general types as below
             f : T1       xs : T2     ys : T3
     
     2. The pattern expresison is a pair, we can lable the pattern with fresh types
             (x::xs1, y::ys1) : T4 list * T5 list    where x : T4      y : T5
-       The wild car pattern represents ([],[]).
+       The wild card pattern represents ([],[]).
     
     3. The value expression is list, we can lable them with fresh type
             x::y::f xs1 ys1 : T6 list       [] : T6 list    where x : T6      y : T6        f xs1 ys1 : T6 list 
@@ -109,7 +109,7 @@ let rec f xs ys =
     4. Now we can unify the types such as
             T1=T2=T3=T4=T5=T6
 
-    5. Since there are no furtherconstraints, so in f# we have)
+    5. Since there are no further constraints, so in F# we have)
             f : 'a list -> 'a list -> 'a list
     1. The most genneral type:
         f : 'a list -> 'a list -> 'a list
