@@ -253,6 +253,7 @@ let rec badProp p =
     | n when n>0 -> badProp (Con(p,(Dis(A("p",n),A("q",n))))) (n-1)
     | _ -> failwith "The argument must be not negative number."
 
+(* Experience with the worst-case senarial of the 2^n *)
 toEClists (badProp (Dis(A("p",0),A("p",0))) 2);;
 
 
