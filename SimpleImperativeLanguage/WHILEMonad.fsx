@@ -1,4 +1,4 @@
-(* Interpreter for a simple WHILE-language.           MRH 21/10 2013 *)
+(* Interpreter for a simple WHILE-language.                          *)
 (* Program skeleton                                                  *)
 (* Based on a natural semantics of WHILE                             *)
 
