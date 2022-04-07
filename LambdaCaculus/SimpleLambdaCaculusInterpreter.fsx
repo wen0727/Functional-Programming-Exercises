@@ -95,11 +95,8 @@ let rec red t = match t with
                 | A(A(O "+", I a), I b)           -> Some(I(a+b))
                 | A(A(O "-", I a), I b)           -> Some(I(a-b))
                 | A(A(O "*", I a), I b)           -> Some(I(a*b))
-                //| A(A((O _) as op, ((I _) as i1)), t2)     -> Some(A(A(op, i1), Option.get (red t2)))
-                //| A(A((O _) as op, t1), t2)                -> Some(A(A(op, Option.get (red t1)), t2))
                 | A(A(A(O "ite", B true),t1),t2)  -> Some t1
                 | A(A(A(O "ite", B false),t1),t2) -> Some t2
-                //| A(A(A(O "ite", b),t1),t2)       -> Some (A(A(A(O "ite", Option.get (red b)),t1),t2))
                 | L(x,t1)                         -> match red t1 with
                                                      | Some l   -> Some(L(x,l))           
                                                      | None     -> None
@@ -200,20 +197,6 @@ let add = L("m", L("n", L("f",L("x",A(A(m, f), A(A(n, f), x))))));;
 let pred = L("n", L("f", L("x",A(A(A(n, L("g",L("h", A(h, A(g,f))))),L("u",x)),L("u",u)))));; 
 
 // toInt: Lambda -> int   --- converts a Church numeral to an integer
-(*
-let rec toInt t =
-    match reduce t with
-    | L(s1,L(s2,app))   -> fCountL 0 s1 s2 (reduce app)
-    | _                 -> failwith "Given Lambda term is not a church numeral."
-and fCountL acc s1 s2 =
-    function
-    | V x2          when x2=s2 -> acc
-    | A(V x1,V x2)  when x1=s1 && x2=s2 -> acc+1
-    | A(V x1,t2)    when x1=s1 -> fCountL (acc+1) s1 s2 t2
-    | A(t1,t2)  ->  let tl = fCountL acc s1 s2 t1
-                    fCountL tl s1 s2 t2 
-    | _         ->  failwith "Given Lambda term is not a church numeral.";;
-*)
 
 let rec toInt t =
     match reduce t with
@@ -230,24 +213,10 @@ and fCountL acc n1 n2 l =
 // Test of toInt
 toInt two;;
 // Test of succ, add, pred and mult
-let egSucc1 = A(succ,one);;
 let egSucc2 = (A(A(add,A(succ,one)),two));;
-(*
-let egSucc2 = (A(A(add,A(succ,one)),two));;
-let eg1Succ2 = red (egSucc2);;
-let eg2Succ2 = red (Option.get eg1Succ2);;
-let eg3Succ2 = red (Option.get eg2Succ2);;
-let eg4Succ2 = red (Option.get eg3Succ2);;
-let eg5Succ2 = red (Option.get eg4Succ2);;
-let eg6Succ2 = red (Option.get eg5Succ2);;
-let eg7Succ2 = red (Option.get eg6Succ2);;
-let eg8Succ2 = red (Option.get eg7Succ2);;
-let eg9Succ2 = red (Option.get eg8Succ2);;
-let eg10Succ2 = red (Option.get eg9Succ2);;
-*)
-
-reduce egSucc2;;
 toInt egSucc2;;
+toInt(A(pred,two));;
+
 
 // mult: Lambda    --- multiplication of Church numerals
 
@@ -282,9 +251,6 @@ toBool (A(IsZero,two));;
 reduce (A(A(A(ITE,A(IsZero,two)),one),two));;
 //if NN=0 then 1 else NN
 (A(A(A(A(ITE,L("NN",A(IsZero,V "NN"))),one),zero),two))
-red (A(A(A(A(ITE,L("NN",A(IsZero,V "NN"))),one),zero),two))
-reduce (A(A(A(A(ITE,L("NN",A(IsZero,V "NN"))),one),zero),two));;
-toInt (A(A(A(A(ITE,L("NN",A(IsZero,V "NN"))),one),zero),two));;
 
 // Make en new declaration for F -- the functional for the factorial function 
 let fName = V "f";;
@@ -301,13 +267,13 @@ let F' =
 let factNew = A(Y, F');;
 
 // Test of factorials
-
+//4!
 let vfact4:Lambda = reduce (A(factNew, A(A(add,A(succ, one)),two)));;
 toInt vfact4;;
-
+//1!
 let vfact1:Lambda = reduce (A(factNew,one));;
 toInt vfact1;;
-
+//2!
 let vfact2:Lambda = reduce (A(factNew,two));;
 toInt vfact2;;
 // Try to compute 5! and be a little patient
