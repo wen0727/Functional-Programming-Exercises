@@ -12,24 +12,16 @@
     *)
 //Invariant:
 //MultiSet -> bool
-let pInvariant1 e1 e2 = e1<>e2;;
 
-(** List.exists: ('a->bool) -> 'a list -> bool **)
-let rec pExists p xs =
-    match xs with
-    | [] -> false
-    | x::xt -> p x || pExists p xt;;
-
-(** List.forall ('a->bool) -> 'a list -> bool **)
 let rec pForAll p xs = 
     match xs with
-    | [] -> true
-    | x::xt -> p x && pForAll p xt;;
+    | []        -> true
+    | x::xt     -> p x && pForAll p xt;;
 
-let pProperty1 ms = 
-    pForAll (fun (_,ei) -> 
-                pExists (fun (_,ej) -> 
-                    pInvariant1 ei ej) ms) ms
+let rec pInvariant1 xs = 
+    match xs with
+    | []            -> true
+    | (_,ei)::mt    -> pForAll (fun (_,ej) -> ei<>ej) mt && pProperty1 mt
 
 //Multiplicity and Member insertion:
 //string -> MultiSet -> Multi-set
@@ -53,6 +45,6 @@ let example1 = fPhrase [] "" (Seq.toList "Go do that thing that you do so well")
 List.map (fun (v,k) -> printf "%d: %s" v k) example1;;
 
 //Unit-test of example1's property.
-let Test1 = pProperty1 example1;;
+let Test1 = pInvariant1 example1;;
 printf "%b" Test1;; 
 
