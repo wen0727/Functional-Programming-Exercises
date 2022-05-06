@@ -1,9 +1,11 @@
+open System.IO
+open System.Text.RegularExpressions;;
 (*MultiSet
     The MultiSet is represented as list of pairs e.g
         [(m0,e0);...;(m_(n),e_(n))]     where n is finite integer.
     where ei is the member of the multi-set and vi is the multiplicity of ei.
 
-    For the multi-set we have an multi-set invariant such as
+    For the MultiSet we have an MultiSet invariant such as
         ei not equal ej for i not equal to j
 
     Furthermore,
@@ -13,38 +15,50 @@
 //Invariant:
 //MultiSet -> bool
 
-let rec pForAll p xs = 
-    match xs with
-    | []        -> true
-    | x::xt     -> p x && pForAll p xt;;
-
 let rec pInvariant1 xs = 
     match xs with
     | []            -> true
-    | (_,ei)::mt    -> pForAll (fun (_,ej) -> ei<>ej) mt && pProperty1 mt
+    | (_,ei)::mt    -> List.forall (fun (_,ej) -> ei<>ej) mt && pInvariant1 mt
 
 //Multiplicity and Member insertion:
 //string -> MultiSet -> Multi-set
 let rec fInsertValueKey x =
     function
-    | []              -> [(1,x)]
-    | (value,y)::tail -> if x=y 
-                         then (value+1,y)::tail
-                         else (value,y)::fInsertValueKey x tail;;
+    | []            -> [(1,x)]
+    | (k,e)::tail   -> if x=e 
+                       then (k+1,e)::tail
+                       else (k,e)::fInsertValueKey x tail;;
 
 //String to MultiSet.
 //MultiSet -> string -> MultiSet -> MultiSet
-let rec fPhrase acc word =
-    function 
-    | []    -> fInsertValueKey word acc
-    | c::cs -> if c=' '
-               then fPhrase (fInsertValueKey word acc) "" cs 
-               else fPhrase acc (word+string c) cs;;
+let rec fPhrase fG cList word acc =
+    match cList with
+    | []        -> fG word acc
+    | c::tail   -> if c=' '
+                   then fPhrase fG tail "" (fG word acc) 
+                   else fPhrase fG tail (word+string c) acc;;
+
 //example 1:
-let example1 = fPhrase [] "" (Seq.toList "Go do that thing that you do so well");;
+let example1 = fPhrase fInsertValueKey (Seq.toList "Go do that thing that you do so well") "" [];;
 List.map (fun (v,k) -> printf "%d: %s" v k) example1;;
 
 //Unit-test of example1's property.
 let Test1 = pInvariant1 example1;;
 printf "%b" Test1;; 
+
+
+let datapath = @"data\data.txt";;
+
+let fLineFold fG acc path =
+    use SR = File.OpenText path
+    let rec fFold res =
+        if SR.EndOfStream then res
+        else fFold (fG res SR)
+    let foldFrom = fFold acc
+    SR.Close()
+    foldFrom;;
+
+let fFileToMultiSet acc path =
+    fLineFold (fun ms res -> fPhrase fInsertValueKey (Seq.toList (res.ReadLine())) "" ms) acc path;;
+
 
