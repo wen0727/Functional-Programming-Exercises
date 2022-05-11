@@ -4,6 +4,6 @@
 obj/
 bin/
 Debug/
-*.sln
+
 *.csproj.*
 *.fsproj.*

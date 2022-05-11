@@ -105,10 +105,10 @@ type Set<'a> = Head of 'a
              | Tail of Set <'a>
 *)
 (** Set.ofList: 'a list -> Set<'a> **)
-let rec fOfList sc =
-    function
-    | [] -> Set.empty
-    | x::xt -> Set.add x sc;;
+let rec fSetOfList xs acc =
+    match xs with
+    | [] -> acc
+    | x::xt -> fSetOfList xt (Set.add x acc);;
 
 (** Set.toList: Set<'a> -> 'a list **)
 (** Set.toList: 'a -> Set<'a> -> Set<'a> **)
