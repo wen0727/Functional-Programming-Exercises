@@ -3,7 +3,7 @@
 .vs/
 obj/
 bin/
-*.sln
-*.json
+Debug/
+
 *.csproj.*
-*.fsproj
+*.fsproj.*
