@@ -21,11 +21,11 @@ let rec pInvariant1 ms =
 //Multiplicity and Member insertion:
 //string -> MultiSet -> Multiset
 let rec fInsertTermToList x ms =
-    match ms with
-    | []            -> [(1,x)]
-    | (v,k)::mt     -> if x=k 
-                       then (v+1,k)::mt
-                       else (v,k)::fInsertTermToList x mt;;
+    if x="" then ms
+    else match ms with
+         | []            -> [(1,x)]
+         | (v,k)::mt     -> if x=k then (v+1,k)::mt
+                            else (v,k)::fInsertTermToList x mt;;
 
 //string -> Map<string,int> -> Map<string,int>
 let fInsertTermToMap word ms = 
